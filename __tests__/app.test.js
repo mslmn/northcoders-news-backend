@@ -82,3 +82,38 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id", () => {
+  test("200: Responds with the correct article", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.article_id).toBe(1);
+        expect(typeof article.author).toBe("string");
+        expect(typeof article.title).toBe("string");
+        expect(typeof article.body).toBe("string");
+        expect(typeof article.topic).toBe("string");
+        expect(typeof article.created_at).toBe("string");
+        expect(typeof article.votes).toBe("number");
+        expect(typeof article.article_img_url).toBe("string");
+      });
+  });
+  test("400: Responds with 'bad request' for invalid article id", () => {
+    return request(app)
+      .get("/api/articles/notAnId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("404: Responds with 'not found' for non-existent article", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+});

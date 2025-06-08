@@ -15,8 +15,12 @@ const handleCustomErrors = (err, req, res, next) => {
 };
 
 const handleServerErrors = (err, req, res, next) => {
-  console.err(err, "<<< error");
+  console.error(err, "<<< error");
   res.status(500).send({ msg: "Something broke!" });
 };
 
-module.exports = { handlePostgresErrors, handleCustomErrors, handleServerErrors };
+module.exports = {
+  handlePostgresErrors,
+  handleCustomErrors,
+  handleServerErrors,
+};
