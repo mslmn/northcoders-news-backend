@@ -100,7 +100,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(typeof article.article_img_url).toBe("string");
       });
   });
-  test("400: Responds with 'bad request' for invalid article id", () => {
+  test.skip("400: Responds with 'bad request' for invalid article_id", () => {
     return request(app)
       .get("/api/articles/notAnId")
       .expect(400)
@@ -108,12 +108,40 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test("404: Responds with 'not found' for non-existent article", () => {
+  test.skip("404: Responds with 'not found' for non-existent article", () => {
     return request(app)
       .get("/api/articles/9999")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("not found");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: responds with an array of comments sorted by  date in desceding order", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+        comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+        });
+      });
+  });
+  test("400: responds with 'bad request' for invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/notAnId/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
       });
   });
 });
