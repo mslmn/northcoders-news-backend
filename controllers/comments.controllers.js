@@ -20,6 +20,10 @@ const postComment = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
 
+  if (!username || !body) {
+    return Promise.reject({ status: 400, msg: "missing required username or body fields" });
+  }
+
   checkExists("articles", "article_id", article_id)
     .then(() => {
       return insertComment(username, body, article_id);

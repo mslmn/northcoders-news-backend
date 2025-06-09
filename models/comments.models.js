@@ -19,10 +19,6 @@ const selectCommentsByArticleId = (article_id) => {
 };
 
 const insertComment = (username, body, article_id) => {
-  if (!username || !body) {
-    return Promise.reject({ status: 400, msg: "missing required username or body fields" });
-  }
-
   const queryStr = `
     INSERT INTO comments (author, body, article_id)
     VALUES ($1, $2, $3)
