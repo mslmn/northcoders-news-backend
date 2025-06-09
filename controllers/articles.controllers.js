@@ -1,4 +1,9 @@
-const { selectAllArticles, selectArticleById } = require("../models/articles.models.js");
+const {
+  selectAllArticles,
+  selectArticleById,
+  updateArticleById,
+} = require("../models/articles.models.js");
+
 const { checkExists } = require("../db/seeds/utils");
 
 const getAllArticles = (req, res, next) => {
@@ -24,4 +29,29 @@ const getArticleById = (req, res, next) => {
       next(err);
     });
 };
-module.exports = { getAllArticles, getArticleById };
+
+const patchArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (inc_votes === undefined) {
+    return next({ status: 400, msg: "missing required field: inc_votes" });
+  }
+
+  if (typeof inc_votes !== "number") {
+    return next({ status: 400, msg: "invalid inc_votes value" });
+  }
+
+  checkExists("articles", "article_id", article_id)
+    .then(() => {
+      return updateArticleById(article_id, inc_votes);
+    })
+    .then((updatedArticle) => {
+      res.status(200).send({ article: updatedArticle });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+module.exports = { getAllArticles, getArticleById, patchArticleById };

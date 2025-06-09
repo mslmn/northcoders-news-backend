@@ -119,7 +119,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-  test("200: responds with an array of comments sorted by  date in desceding order", () => {
+  test("200: Responds with an array of comments sorted by  date in desceding order", () => {
     return request(app)
       .get("/api/articles/3/comments")
       .expect(200)
@@ -136,7 +136,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("400: responds with 'bad request' for invalid article_id", () => {
+  test("400: Responds with 'bad request' for invalid article_id", () => {
     return request(app)
       .get("/api/articles/notAnId/comments")
       .expect(400)
@@ -147,7 +147,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("POST /api/articles/:article_id/comments", () => {
-  test("201: responds with the newly created comment", () => {
+  test("201: Responds with the newly created comment", () => {
     const newComment = {
       username: "butter_bridge",
       body: "I love this article!",
@@ -167,7 +167,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(comment.votes).toBe(0);
       });
   });
-  test("400: responds with error when missing username or body fields", () => {
+  test("400: Responds with error when missing username or body fields", () => {
     const badComment = { username: "" };
     return request(app)
       .post("/api/articles/1/comments")
@@ -178,7 +178,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("404: responds with error when article_id does not exist", () => {
+  test("404: Responds with error when article_id does not exist", () => {
     const newComment = {
       username: "butter_bridge",
       body: "Great article!",
@@ -186,6 +186,63 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/9999/comments")
       .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("db record not found");
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: Responds with the updated article when given a valid inc_votes", () => {
+    const updateVotes = { inc_votes: 5 };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updateVotes)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toHaveProperty("article_id", 1);
+        expect(typeof article.title).toBe("string");
+        expect(typeof article.author).toBe("string");
+        expect(typeof article.body).toBe("string");
+        expect(typeof article.votes).toBe("number");
+      });
+  });
+  test("400: Responds with an error when inc_votes is missing from the post request body", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("missing required field: inc_votes");
+      });
+  });
+  test("400: Responds with an error when inc_votes is not a number", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "five" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid inc_votes value");
+      });
+  });
+  test("400: Responds with error for invalid article_id", () => {
+    const updateVotes = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/notAnId")
+      .send(updateVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("404: Responds with not found for a non-existent article", () => {
+    const updateVotes = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/9999")
+      .send(updateVotes)
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("db record not found");
