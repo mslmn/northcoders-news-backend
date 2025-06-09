@@ -1,4 +1,16 @@
+const seed = require("../db/seeds/seed.js");
+const data = require("../db/data/test-data/index.js");
+const db = require("../db/connection.js");
+
 const { convertTimestampToDate, createLookupObj, checkExists } = require("../db/seeds/utils");
+
+beforeEach(() => {
+  return seed(data);
+});
+
+afterAll(() => {
+  return db.end();
+});
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
