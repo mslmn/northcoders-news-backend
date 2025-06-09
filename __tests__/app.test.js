@@ -16,7 +16,7 @@ afterAll(() => {
 });
 
 describe("GET /api", () => {
-  test("200: Responds with an object detailing the documentation for each endpoint", () => {
+  test("200: responds with an object detailing the documentation for each endpoint", () => {
     return request(app)
       .get("/api")
       .expect(200)
@@ -27,7 +27,7 @@ describe("GET /api", () => {
 });
 
 describe("GET /api/topics", () => {
-  test("200: Responds with an array of all topics", () => {
+  test("200: responds with an array of all topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -43,7 +43,7 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api/articles", () => {
-  test("200: Responds with an array of all topics, sorted by date in desceding order", () => {
+  test("200: responds with an array of all topics, sorted by date in desceding order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -67,7 +67,7 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/users", () => {
-  test("200: Responds with an array of all users", () => {
+  test("200: responds with an array of all users", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
@@ -84,7 +84,7 @@ describe("GET /api/users", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test("200: Responds with the correct article", () => {
+  test("200: responds with the correct article", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -100,7 +100,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(typeof article.article_img_url).toBe("string");
       });
   });
-  test("400: Responds with 'bad request' for invalid article_id", () => {
+  test("400: responds with 'bad request' for invalid article_id", () => {
     return request(app)
       .get("/api/articles/notAnId")
       .expect(400)
@@ -108,7 +108,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test("404: Responds with 'db record not found' for non-existent article", () => {
+  test("404: responds with 'db record not found' for non-existent article", () => {
     return request(app)
       .get("/api/articles/9999")
       .expect(404)
@@ -119,7 +119,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-  test("200: Responds with an array of comments sorted by  date in desceding order", () => {
+  test("200: responds with an array of comments sorted by  date in desceding order", () => {
     return request(app)
       .get("/api/articles/3/comments")
       .expect(200)
@@ -136,7 +136,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("400: Responds with 'bad request' for invalid article_id", () => {
+  test("400: responds with 'bad request' for invalid article_id", () => {
     return request(app)
       .get("/api/articles/notAnId/comments")
       .expect(400)
@@ -147,7 +147,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("POST /api/articles/:article_id/comments", () => {
-  test("201: Responds with the newly created comment", () => {
+  test("201: responds with the newly created comment", () => {
     const newComment = {
       username: "butter_bridge",
       body: "I love this article!",
@@ -167,7 +167,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(comment.votes).toBe(0);
       });
   });
-  test("400: Responds with error when missing username or body fields", () => {
+  test("400: responds with error when missing username or body fields", () => {
     const badComment = { username: "" };
     return request(app)
       .post("/api/articles/1/comments")
@@ -178,7 +178,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("404: Responds with error when article_id does not exist", () => {
+  test("404: responds with error when article_id does not exist", () => {
     const newComment = {
       username: "butter_bridge",
       body: "Great article!",
@@ -194,7 +194,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("200: Responds with the updated article when given a valid inc_votes", () => {
+  test("200: responds with the updated article when given a valid inc_votes", () => {
     const updateVotes = { inc_votes: 5 };
 
     return request(app)
@@ -210,7 +210,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(typeof article.votes).toBe("number");
       });
   });
-  test("400: Responds with an error when inc_votes is missing from the post request body", () => {
+  test("400: responds with an error when inc_votes is missing from the post request body", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({})
@@ -219,7 +219,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("missing required field: inc_votes");
       });
   });
-  test("400: Responds with an error when inc_votes is not a number", () => {
+  test("400: responds with an error when inc_votes is not a number", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: "five" })
@@ -228,7 +228,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("invalid inc_votes value");
       });
   });
-  test("400: Responds with error for invalid article_id", () => {
+  test("400: responds with error for invalid article_id", () => {
     const updateVotes = { inc_votes: 5 };
     return request(app)
       .patch("/api/articles/notAnId")
@@ -238,7 +238,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test("404: Responds with not found for a non-existent article", () => {
+  test("404: responds with not found for a non-existent article", () => {
     const updateVotes = { inc_votes: 5 };
     return request(app)
       .patch("/api/articles/9999")
