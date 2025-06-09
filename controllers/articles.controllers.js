@@ -1,4 +1,5 @@
 const { selectAllArticles, selectArticleById } = require("../models/articles.models.js");
+const { checkExists } = require("../db/seeds/utils");
 
 const getAllArticles = (req, res, next) => {
   selectAllArticles()
@@ -6,19 +7,20 @@ const getAllArticles = (req, res, next) => {
       res.status(200).send({ articles: articles });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
 
 const getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  selectArticleById(article_id)
+  checkExists("articles", "article_id", article_id)
+    .then(() => {
+      return selectArticleById(article_id);
+    })
     .then((article) => {
       res.status(200).send({ article: article });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };

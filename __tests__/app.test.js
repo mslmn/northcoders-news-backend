@@ -100,7 +100,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(typeof article.article_img_url).toBe("string");
       });
   });
-  test.skip("400: Responds with 'bad request' for invalid article_id", () => {
+  test("400: Responds with 'bad request' for invalid article_id", () => {
     return request(app)
       .get("/api/articles/notAnId")
       .expect(400)
@@ -108,12 +108,12 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test.skip("404: Responds with 'not found' for non-existent article", () => {
+  test("404: Responds with 'db record not found' for non-existent article", () => {
     return request(app)
       .get("/api/articles/9999")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found");
+        expect(body.msg).toBe("db record not found");
       });
   });
 });
@@ -142,6 +142,53 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: responds with the newly created comment", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I love this article!",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(typeof comment.comment_id).toBe("number");
+        expect(typeof comment.created_at).toBe("string");
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("I love this article!");
+        expect(comment.article_id).toBe(1);
+        expect(comment.votes).toBe(0);
+      });
+  });
+  test("400: responds with error when missing username or body fields", () => {
+    const badComment = { username: "" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(badComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("missing required username or body fields");
+      });
+  });
+
+  test("404: responds with error when article_id does not exist", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Great article!",
+    };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("db record not found");
       });
   });
 });

@@ -68,5 +68,26 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Adds a comment to an article",
+    "requestBody": {
+      "username": "The username of the commenter",
+      "body": "The content of the comment"
+    },
+    "exampleRequestBody": {
+      "username": "butter_bridge",
+      "body": "I love this article!"
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "author": "butter_bridge",
+        "body": "I love this article!",
+        "article_id": 1,
+        "votes": 0,
+        "created_at": "2024-06-09T00:00:00.000Z"
+      }
+    }
   }
 }

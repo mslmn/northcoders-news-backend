@@ -1,7 +1,7 @@
 const db = require("../db/connection.js");
 
 const selectAllArticles = () => {
-  const query = `
+  const queryStr = `
     SELECT 
         articles.article_id,
         articles.title,
@@ -17,7 +17,7 @@ const selectAllArticles = () => {
     GROUP BY articles.article_id
     ORDER BY articles.created_at DESC;   
     `;
-  return db.query(query).then(({ rows }) => {
+  return db.query(queryStr).then(({ rows }) => {
     return rows;
   });
 };
@@ -31,9 +31,9 @@ const selectArticleById = (article_id) => {
       [article_id]
     )
     .then(({ rows }) => {
-      if (!rows.length) {
-        return Promise.reject({ status: 404, msg: "not found" });
-      }
+      //   if (!rows.length) {
+      //     return Promise.reject({ status: 404, msg: "not found" });
+      //   }
       return rows[0];
     });
 };

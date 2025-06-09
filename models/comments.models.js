@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const format = require("pg-format");
 
 const selectCommentsByArticleId = (article_id) => {
   return db
@@ -10,11 +11,27 @@ const selectCommentsByArticleId = (article_id) => {
       [article_id]
     )
     .then(({ rows }) => {
-      if (!rows.length) {
-        return Promise.reject({ status: 404, msg: "not found" });
-      }
+      //   if (!rows.length) {
+      //     return Promise.reject({ status: 404, msg: "not found" });
+      //   }
       return rows;
     });
 };
 
-module.exports = { selectCommentsByArticleId };
+const insertComment = (username, body, article_id) => {
+  if (!username || !body) {
+    return Promise.reject({ status: 400, msg: "missing required username or body fields" });
+  }
+
+  const queryStr = `
+    INSERT INTO comments (author, body, article_id)
+    VALUES ($1, $2, $3)
+    RETURNING comment_id, author, body, article_id, votes, created_at;
+    `;
+
+  return db.query(queryStr, [username, body, article_id]).then(({ rows }) => {
+    return rows[0];
+  });
+};
+
+module.exports = { selectCommentsByArticleId, insertComment };

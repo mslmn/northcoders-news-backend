@@ -1,5 +1,4 @@
-const { convertTimestampToDate } = require("../db/seeds/utils");
-const { createLookupObj } = require("../db/seeds/utils");
+const { convertTimestampToDate, createLookupObj, checkExists } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -34,6 +33,18 @@ describe("convertTimestampToDate", () => {
     const result = convertTimestampToDate(input);
     const expected = { key: "value" };
     expect(result).toEqual(expected);
+  });
+});
+
+describe("checkExists", () => {
+  test("resolves with true when db record exists", () => {
+    return expect(checkExists("topics", "slug", "mitch")).resolves.toEqual(true);
+  });
+  test("rejects with 404 when db record does not exist", () => {
+    return expect(checkExists("topics", "slug", "nonexistent")).rejects.toEqual({
+      status: 404,
+      msg: "db record not found",
+    });
   });
 });
 
