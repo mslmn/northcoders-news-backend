@@ -41,10 +41,11 @@ const selectArticleById = (article_id) => {
 const updateArticleById = (article_id, inc_votes) => {
   return db
     .query(
-      `UPDATE articles
-     SET votes = votes + $1
-     WHERE article_id = $2
-     RETURNING author, title, article_id, body, topic, created_at, votes, article_img_url;`,
+      `
+    UPDATE articles
+    SET votes = votes + $1
+    WHERE article_id = $2
+    RETURNING author, title, article_id, body, topic, created_at, votes, article_img_url;`,
       [inc_votes, article_id]
     )
     .then(({ rows }) => {

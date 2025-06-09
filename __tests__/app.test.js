@@ -249,3 +249,25 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: deletes the given comment by comment_id", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("400: responds with 'bad request' when comment_id is invalid", () => {
+    return request(app)
+      .delete("/api/comments/notAnId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("404: responds with 'db record not found' when comment_id does not exist", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("db record not found");
+      });
+  });
+});

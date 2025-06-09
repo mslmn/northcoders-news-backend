@@ -1,4 +1,8 @@
-const { selectCommentsByArticleId, insertComment } = require("../models/comments.models.js");
+const {
+  selectCommentsByArticleId,
+  insertComment,
+  removeCommentById,
+} = require("../models/comments.models.js");
 const { checkExists } = require("../db/seeds/utils.js");
 
 const getArticleComments = (req, res, next) => {
@@ -36,4 +40,19 @@ const postComment = (req, res, next) => {
     });
 };
 
-module.exports = { getArticleComments, postComment };
+const deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+
+  checkExists("comments", "comment_id", comment_id)
+    .then(() => {
+      return removeCommentById(comment_id);
+    })
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+module.exports = { getArticleComments, postComment, deleteComment };
