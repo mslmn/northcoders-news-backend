@@ -15,8 +15,14 @@ const {
   postComment,
   deleteComment,
 } = require("./controllers/comments.controllers.js");
+// const ejs = require("ejs");
 
 app.use(express.json());
+
+// app.set("view engine", "ejs");
+// app.set("views", "public");
+
+app.use("/", express.static("public"));
 
 app.get("/api", getEndpoints);
 
