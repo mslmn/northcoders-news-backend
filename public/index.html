@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Northcoders News API Documentation</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Northcoders News API</h1>
+    </header>
+
+    <main>
+      <section id="overview">
+        <h2>This API provieds access to Northcoders News articles, topics, and users.</h2>
+      </section>
+
+      <section id="endpoints">
+        <h2>Endpoints</h2>
+
+        <section id="get-topics">
+          <h3>GET /api/topics</h3>
+          <p>Retrieves a list of all topics.</p>
+        </section>
+
+        <section id="get-articles">
+          <h3>GET /api/articles</h3>
+          <p>Retrieves a list of all articles.</p>
+        </section>
+
+        <section id="get-users">
+          <h3>GET /api/users</h3>
+          <p>Retrieves a list of all users.</p>
+        </section>
+
+        <section id="get-article-by-id">
+          <h3>GET /api/articles/:article_id</h3>
+          <p>Retrieves a single article by its ID.</p>
+        </section>
+
+        <section id="get-article-by-id">
+          <h3>GET /api/articles/:article_id/comments</h3>
+          <p>Retrieves comments for a specific article by its ID, sorted by date descending.</p>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <p>© Northcoders News API</p>
+    </footer>
+  </body>
+</html>
