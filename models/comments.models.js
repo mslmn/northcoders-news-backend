@@ -1,5 +1,4 @@
 const db = require("../db/connection.js");
-const format = require("pg-format");
 
 const selectCommentsByArticleId = (article_id) => {
   return db
@@ -11,9 +10,6 @@ const selectCommentsByArticleId = (article_id) => {
       [article_id]
     )
     .then(({ rows }) => {
-      //   if (!rows.length) {
-      //     return Promise.reject({ status: 404, msg: "not found" });
-      //   }
       return rows;
     });
 };
