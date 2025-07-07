@@ -1,5 +1,7 @@
 # Northcoders News API
 
+🚀 **Live URL:** [https://nc-news-app-api.onrender.com/api](https://nc-news-app-api.onrender.com/api)
+
 A RESTful API for articles, users, topics, and comments.
 
 ---
