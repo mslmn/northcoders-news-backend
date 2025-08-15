@@ -23,15 +23,19 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an object containing array of all articles",
+    "description": "Serves an object containing an array of all articles. Supports filtering and sorting queries.",
     "queries": [
       {
-        "sort_by": "column to sort by (defaults to created_at). Valid columns: article_id, title, topic, author, created_at, votes, article_img_url, comment_count"
+        "sort_by": "Sorts the articles by any valid column (defaults to created_at). Valid columns: article_id, title, topic, author, created_at, votes, article_img_url, comment_count"
       },
       {
-        "order": "asc or desc (defaults to desc)"
+        "order": "Orders the results in asc or desc (defaults to desc)"
+      },
+      {
+        "topic": "Filters the articles by a specific topic value"
       }
     ],
+    "exampleRequest": "/api/articles?topic=mitch&sort_by=votes&order=asc",
     "exampleResponse": {
       "articles": [
         {
