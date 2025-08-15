@@ -74,9 +74,7 @@ describe("GET /api/articles (sorting queries)", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles.length).toBeGreaterThan(0);
-        // author is a string; alphabetical ascending
         expect(articles).toBeSortedBy("author", { descending: false });
-        // still returns expected fields
         articles.forEach((a) => {
           expect(a).not.toHaveProperty("body");
           expect(typeof a.comment_count).toBe("number");
@@ -91,7 +89,6 @@ describe("GET /api/articles (sorting queries)", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles.length).toBeGreaterThan(0);
-        // comment_count is numeric; highest first
         expect(articles).toBeSortedBy("comment_count", { descending: true });
       });
   });
@@ -102,7 +99,6 @@ describe("GET /api/articles (sorting queries)", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        // created_at should be ascending now
         expect(articles).toBeSortedBy("created_at", { descending: false });
       });
   });
@@ -122,6 +118,55 @@ describe("GET /api/articles (sorting queries)", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("invalid order query");
+      });
+  });
+});
+
+describe("GET /api/articles (topic query)", () => {
+  test("200: filters articles by a valid topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles.length).toBeGreaterThan(0);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+
+  test("200: responds with empty array if topic exists but has no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
+
+  test("404: responds with error if topic does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=not_a_topic")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("topic not found");
+      });
+  });
+});
+
+describe("GET /api/articles (combined queries)", () => {
+  test("200: filters by topic and sorts by votes ascending", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles.length).toBeGreaterThan(0);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+        expect(articles).toBeSortedBy("votes", { ascending: true });
       });
   });
 });
