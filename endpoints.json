@@ -1,10 +1,9 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "Serves a JSON representation of all available API endpoints."
   },
   "GET /api/topics": {
-    "description": "serves an object containing an array of all topics",
-    "queries": [],
+    "description": "Returns a list of available topics. Topic slugs can be used as the 'topic' query on GET /api/articles.",
     "exampleResponse": {
       "topics": [
         {
@@ -20,19 +19,33 @@
           "description": "what books are made of"
         }
       ]
-    }
+    },
+    "errors": []
+  },
+  "GET /api/users": {
+    "description": "Returns a list of users.",
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "lurker",
+          "name": "do_nothing",
+          "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+        }
+      ]
+    },
+    "errors": []
   },
   "GET /api/articles": {
-    "description": "Serves an object containing an array of all articles. Supports filtering and sorting queries.",
+    "description": "Returns a list of articles. Supports filtering and sorting.",
     "queries": [
       {
-        "sort_by": "Sorts the articles by any valid column (defaults to created_at). Valid columns: article_id, title, topic, author, created_at, votes, article_img_url, comment_count"
+        "sort_by": "Sorts by a valid column. Defaults to created_at. Valid: article_id, title, topic, author, created_at, votes, article_img_url, comment_count"
       },
       {
-        "order": "Orders the results in asc or desc (defaults to desc)"
+        "order": "asc or desc. Defaults to desc"
       },
       {
-        "topic": "Filters the articles by a specific topic value"
+        "topic": "Filters by topic slug. If omitted, returns all articles"
       }
     ],
     "exampleRequest": "/api/articles?topic=mitch&sort_by=votes&order=asc",
@@ -49,23 +62,24 @@
           "comment_count": 2
         }
       ]
-    }
-  },
-  "GET /api/users": {
-    "description": "serves an object containing an array of users",
-    "queries": [],
-    "exampleResponse": {
-      "users": [
-        {
-          "username": "lurker",
-          "name": "do_nothing",
-          "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
-        }
-      ]
-    }
+    },
+    "errors": [
+      {
+        "status": 400,
+        "msg": "invalid sort_by query"
+      },
+      {
+        "status": 400,
+        "msg": "invalid order query"
+      },
+      {
+        "status": 404,
+        "msg": "topic not found"
+      }
+    ]
   },
   "GET /api/articles/:article_id": {
-    "description": "serves a specific article by its ID (includes comment_count, the total number of comments for this article)",
+    "description": "Returns a single article by id. Includes comment_count.",
     "queries": [],
     "exampleRequest": "/api/articles/1",
     "exampleResponse": {
@@ -80,11 +94,22 @@
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         "comment_count": 11
       }
-    }
+    },
+    "errors": [
+      {
+        "status": 400,
+        "msg": "bad request"
+      },
+      {
+        "status": 404,
+        "msg": "db record not found"
+      }
+    ]
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "serves an array of comments for a specific article by its ID, sorted by date in descending order",
+    "description": "Returns comments for an article, most recent first.",
     "queries": [],
+    "exampleRequest": "/api/articles/1/comments",
     "exampleResponse": {
       "comments": [
         {
@@ -96,18 +121,32 @@
           "article_id": 1
         }
       ]
-    }
+    },
+    "errors": [
+      {
+        "status": 400,
+        "msg": "bad request"
+      },
+      {
+        "status": 404,
+        "msg": "db record not found"
+      }
+    ]
   },
   "POST /api/articles/:article_id/comments": {
-    "description": "Adds a comment to an article",
+    "description": "Adds a comment to an article and returns the new comment.",
+    "queries": [],
     "requestBody": {
-      "username": "The username of the commenter",
-      "body": "The content of the comment"
+      "schema": {
+        "username": "string (required)",
+        "body": "string (required)"
+      },
+      "example": {
+        "username": "butter_bridge",
+        "body": "I love this article!"
+      }
     },
-    "exampleRequestBody": {
-      "username": "butter_bridge",
-      "body": "I love this article!"
-    },
+    "exampleRequest": "/api/articles/1/comments",
     "exampleResponse": {
       "comment": {
         "comment_id": 1,
@@ -117,13 +156,34 @@
         "votes": 0,
         "created_at": "2024-06-09T00:00:00.000Z"
       }
-    }
+    },
+    "errors": [
+      {
+        "status": 400,
+        "msg": "missing required username or body fields"
+      },
+      {
+        "status": 400,
+        "msg": "bad request"
+      },
+      {
+        "status": 404,
+        "msg": "db record not found"
+      }
+    ]
   },
   "PATCH /api/articles/:article_id": {
-    "description": "updates the votes property of an article by article_id",
-    "exampleRequest": {
-      "inc_votes": 2
+    "description": "Increments or decrements the votes on an article.",
+    "queries": [],
+    "requestBody": {
+      "schema": {
+        "inc_votes": "number (required; can be negative)"
+      },
+      "example": {
+        "inc_votes": 2
+      }
     },
+    "exampleRequest": "/api/articles/1",
     "exampleResponse": {
       "article": {
         "author": "butter_bridge",
@@ -135,9 +195,40 @@
         "votes": 118,
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }
-    }
+    },
+    "errors": [
+      {
+        "status": 400,
+        "msg": "missing required field: inc_votes"
+      },
+      {
+        "status": 400,
+        "msg": "invalid inc_votes value"
+      },
+      {
+        "status": 400,
+        "msg": "bad request"
+      },
+      {
+        "status": 404,
+        "msg": "db record not found"
+      }
+    ]
   },
   "DELETE /api/comments/:comment_id": {
-    "description": "deletes the given comment by comment_id"
+    "description": "Deletes a comment by id. Responds with status 204 and no content.",
+    "queries": [],
+    "exampleRequest": "/api/comments/1",
+    "exampleResponse": {},
+    "errors": [
+      {
+        "status": 400,
+        "msg": "bad request"
+      },
+      {
+        "status": 404,
+        "msg": "db record not found"
+      }
+    ]
   }
 }
