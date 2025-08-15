@@ -205,6 +205,15 @@ describe("GET /api/articles/:article_id", () => {
         expect(typeof article.article_img_url).toBe("string");
       });
   });
+  test("200: article response includes comment_count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("comment_count");
+        expect(typeof body.article.comment_count).toBe("number");
+      });
+  });
   test("400: responds with 'bad request' for invalid article_id", () => {
     return request(app)
       .get("/api/articles/notAnId")
