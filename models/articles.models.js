@@ -11,7 +11,7 @@ const VALID_SORT_COLS = [
   "comment_count",
 ];
 
-const selectAllArticles = (sort_by = "created_at", order = "desc") => {
+const selectAllArticles = (sort_by = "created_at", order = "desc", topic) => {
   const col = sort_by || "created_at";
   const dir = (order || "desc").toLowerCase();
 
@@ -20,6 +20,13 @@ const selectAllArticles = (sort_by = "created_at", order = "desc") => {
   }
   if (!["asc", "desc"].includes(dir)) {
     return Promise.reject({ status: 400, msg: "invalid order query" });
+  }
+
+  const values = [];
+  let whereClause = "";
+  if (topic) {
+    values.push(topic);
+    whereClause = `WHERE articles.topic = $${values.length}`;
   }
 
   const queryStr = `
@@ -35,11 +42,12 @@ const selectAllArticles = (sort_by = "created_at", order = "desc") => {
     FROM articles
     LEFT JOIN comments
         ON comments.article_id = articles.article_id
+    ${whereClause}
     GROUP BY articles.article_id
     ORDER BY ${col} ${dir.toUpperCase()};
   `;
 
-  return db.query(queryStr).then(({ rows }) => {
+  return db.query(queryStr, values).then(({ rows }) => {
     return rows;
   });
 };
