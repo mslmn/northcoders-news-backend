@@ -7,70 +7,160 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <header>
-      <h1>Northcoders News API</h1>
-      <nav>
-        <ul>
-          <a href="#overview">Overview</a>
-          <a href="#endpoints">Endpoints</a>
-        </ul>
-      </nav>
-    </header>
-
-    <main>
+    <main class="main">
       <section id="overview">
-        <h2>This API provides access to Northcoders News articles, topics, and users.</h2>
+        <h2>Northcoders News API Endpoints</h2>
+        <p>This API provides access to Northcoders News articles, topics, users, and comments.</p>
       </section>
 
       <section id="endpoints">
-        <h2>Endpoints</h2>
+        <details>
+          <summary><span class="method get">GET</span> /api</summary>
+          <div class="sub">
+            <p>Serves a JSON representation of all available API endpoints.</p>
+          </div>
+        </details>
 
-        <section id="get-topics">
-          <h3>GET /api/topics</h3>
-          <p>Retrieves a list of all topics.</p>
-          <h4>Example Request</h4>
+        <details>
+          <summary><span class="method get">GET</span> /api/topics</summary>
+          <div class="sub">
+            <p>Returns a list of available topics.</p>
+            <h4>Example Response</h4>
+            <pre><code>{
+  "topics": [
+    { "slug": "mitch", "description": "The man, the Mitch, the legend" },
+    { "slug": "cats", "description": "Not dogs" },
+    { "slug": "paper", "description": "what books are made of" }
+  ]
+}</code></pre>
+          </div>
+        </details>
 
-          <pre>GET /api/topics</pre>
+        <details>
+          <summary><span class="method get">GET</span> /api/users</summary>
+          <div class="sub">
+            <p>Returns a list of users.</p>
+            <h4>Example Response</h4>
+            <pre><code>{
+  "users": [
+    {
+      "username": "lurker",
+      "name": "do_nothing",
+      "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+    }
+  ]
+}</code></pre>
+          </div>
+        </details>
 
-          <h4>Example Response</h4>
+        <details>
+          <summary><span class="method get">GET</span> /api/articles</summary>
+          <div class="sub">
+            <p>Returns a list of articles. Supports filtering and sorting.</p>
+            <h4>Queries</h4>
+            <ul>
+              <li><b>sort_by</b>: Sorts by a valid column (defaults to `created_at`).</li>
+              <li>
+                <b>order</b>: <code>asc</code> or <code>desc</code> (defaults to <code>desc</code>).
+              </li>
+              <li><b>topic</b>: Filters by topic slug.</li>
+            </ul>
+            <h4>Example Request</h4>
+            <pre><code>GET /api/articles?topic=mitch&sort_by=votes&order=asc</code></pre>
+            <h4>Example Response</h4>
+            <pre><code>{
+  "articles": [
+    {
+      "article_id": 3,
+      "title": "Eight pug gifs that remind me of mitch",
+      "topic": "mitch",
+      "author": "icellusedkars",
+      "created_at": "2020-11-03T09:12:00.000Z",
+      "votes": 0,
+      "article_img_url": "...",
+      "comment_count": 2
+    }
+  ]
+}</code></pre>
+          </div>
+        </details>
 
-          <pre>
-            {
-              "articles": [
-                {
-                  "article_id": 3,
-                  "title": "Eight pug gifs that remind me of mitch",
-                  "topic": "mitch",
-                  "author": "icellusedkars",
-                  "created_at": "2020-11-03T09:12:00.000Z",
-                  "votes": 0,
-                  "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-                  "comment_count": 2
-                }
-              ]
-            }
-          </pre>
-        </section>
+        <details>
+          <summary><span class="method get">GET</span> /api/articles/:article_id</summary>
+          <div class="sub">
+            <p>Returns a single article by id, including a <code>comment_count</code>.</p>
+            <h4>Example Request</h4>
+            <pre><code>GET /api/articles/1</code></pre>
+            <h4>Example Response</h4>
+            <pre><code>{
+  "article": {
+    "author": "butter_bridge",
+    "title": "Living in the shadow of a great man",
+    "article_id": 1,
+    "body": "I find this existence challenging",
+    "topic": "mitch",
+    "created_at": "2020-07-09T20:11:00.000Z",
+    "votes": 100,
+    "article_img_url": "...",
+    "comment_count": 11
+  }
+}</code></pre>
+          </div>
+        </details>
 
-        <section id="get-articles">
-          <h3>GET /api/articles</h3>
-          <p>Retrieves a list of all articles.</p>
-        </section>
+        <details>
+          <summary><span class="method get">GET</span> /api/articles/:article_id/comments</summary>
+          <div class="sub">
+            <p>Returns comments for an article, with the most recent first.</p>
+            <h4>Example Request</h4>
+            <pre><code>GET /api/articles/1/comments</code></pre>
+            <h4>Example Response</h4>
+            <pre><code>{
+  "comments": [
+    {
+      "comment_id": 1,
+      "votes": 16,
+      "created_at": "2020-04-06T12:17:00.000Z",
+      "author": "butter_bridge",
+      "body": "I hate this song.",
+      "article_id": 1
+    }
+  ]
+}</code></pre>
+          </div>
+        </details>
 
-        <section id="get-users">
-          <h3>GET /api/users</h3>
-          <p>Retrieves a list of all users.</p>
-        </section>
+        <details>
+          <summary>
+            <span class="method post">POST</span> /api/articles/:article_id/comments
+          </summary>
+          <div class="sub">
+            <p>Adds a comment to an article and returns the new comment.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "username": "butter_bridge",
+  "body": "I love this article!"
+}</code></pre>
+          </div>
+        </details>
 
-        <section id="get-article-by-id">
-          <h3>GET /api/articles/:article_id</h3>
-          <p>Retrieves a single article by its ID.</p>
-        </section>
+        <details>
+          <summary><span class="method patch">PATCH</span> /api/articles/:article_id</summary>
+          <div class="sub">
+            <p>Increments or decrements the votes on an article.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "inc_votes": 2
+}</code></pre>
+          </div>
+        </details>
 
-        <section id="get-article-by-id">
-          <h3>GET /api/articles/:article_id/comments</h3>
-          <p>Retrieves comments for a specific article by its ID, sorted by date descending.</p>
-        </section>
+        <details>
+          <summary><span class="method delete">DELETE</span> /api/comments/:comment_id</summary>
+          <div class="sub">
+            <p>Deletes a comment by id. Responds with status 204 and no content.</p>
+          </div>
+        </details>
       </section>
     </main>
 

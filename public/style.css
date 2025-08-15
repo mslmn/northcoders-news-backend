@@ -1,5 +1,129 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  scrollbar-gutter: stable;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
-  color: #333;
+  background: #fafafa;
+  color: #222;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  font-size: 17px;
+  padding: 20px;
+}
+
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+h2 {
+  text-align: center;
+  margin: 20px 0 12px;
+  font-size: 22px;
+}
+
+details {
+  background: #f2f2f2;
+  border: 1px solid #e3e3e3;
+  border-radius: 6px;
+  margin: 16px 0;
+  padding: 10px;
+}
+
+summary {
+  cursor: pointer;
+  padding: 12px 14px;
+  font: 15px/1.5 monospace;
+  border-radius: 4px;
+  transition: background-color 0.12s ease, padding 0.12s ease;
+}
+
+summary::marker {
+  color: #666;
+}
+
+details[open] summary {
+  background: #eaeaea;
+}
+
+.sub {
+  padding: 16px;
+  border-top: 1px solid #e3e3e3;
+  font-size: 16px;
+}
+
+details[open] .sub {
+  animation: fadeIn 0.12s ease;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+h4 {
+  margin: 10px 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+pre {
+  font-family: monospace;
+  background: #f7f7f3;
+  color: #222;
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  margin-top: 8px;
+  border: 1px solid #ddd;
+  overflow-x: auto;
+  white-space: pre;
+  max-width: 100%;
+}
+code {
+  font-family: inherit;
+}
+.method {
+  font: 13px/1 monospace;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-left: 6px;
+  margin-right: 8px;
+  background: #fff;
+  border: 1px solid #e3e3e3;
+}
+.get {
+  background: #6a7fb5;
+  color: #fff;
+  border-color: transparent;
+}
+.post {
+  background: #4d8a4c;
+  color: #fff;
+  border-color: transparent;
+}
+.patch {
+  background: #a78d3c;
+  color: #fff;
+  border-color: transparent;
+}
+.delete {
+  background: #b44c3d;
+  color: #fff;
+  border-color: transparent;
+}
+footer {
+  text-align: center;
+  margin: 28px 0 10px;
+  font-size: 14px;
+  color: #666;
 }
