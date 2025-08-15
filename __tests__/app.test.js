@@ -66,6 +66,66 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe("GET /api/articles (sorting queries)", () => {
+  test("200: sorts by a valid column (author) ascending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles.length).toBeGreaterThan(0);
+        // author is a string; alphabetical ascending
+        expect(articles).toBeSortedBy("author", { descending: false });
+        // still returns expected fields
+        articles.forEach((a) => {
+          expect(a).not.toHaveProperty("body");
+          expect(typeof a.comment_count).toBe("number");
+        });
+      });
+  });
+
+  test("200: sorts by derived column (comment_count) descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles.length).toBeGreaterThan(0);
+        // comment_count is numeric; highest first
+        expect(articles).toBeSortedBy("comment_count", { descending: true });
+      });
+  });
+
+  test("200: defaults to created_at when only order is provided (created_at asc)", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        // created_at should be ascending now
+        expect(articles).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+
+  test("400: invalid sort_by column", () => {
+    return request(app)
+      .get("/api/articles?sort_by=not_a_column")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid sort_by query");
+      });
+  });
+
+  test("400: invalid order value", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=sideways")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid order query");
+      });
+  });
+});
+
 describe("GET /api/users", () => {
   test("200: responds with an array of all users", () => {
     return request(app)
