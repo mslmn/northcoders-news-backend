@@ -1,6 +1,6 @@
 # Northcoders News API
 
-🚀 **Live URL:** [https://northcoders-news-gida.onrender.com/api](https://northcoders-news-gida.onrender.com/api)
+🚀 **API Docs:** [https://northcoders-news-gida.onrender.com](https://northcoders-news-gida.onrender.com)
 
 A RESTful API for articles, users, topics, and comments.
 
