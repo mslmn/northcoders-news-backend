@@ -7,12 +7,19 @@ const {
 const { checkExists } = require("../db/seeds/utils");
 
 const getAllArticles = (req, res, next) => {
-  const { sort_by, order } = req.query;
-  selectAllArticles(sort_by, order)
+  const { sort_by, order, topic } = req.query;
+
+  const topicCheck = topic ? checkExists("topics", "slug", topic) : Promise.resolve();
+
+  topicCheck
+    .then(() => selectAllArticles(sort_by, order, topic))
     .then((articles) => {
       res.status(200).send({ articles });
     })
     .catch((err) => {
+      if (topic && err?.status === 404) {
+        return next({ status: 404, msg: "topic not found" });
+      }
       next(err);
     });
 };
